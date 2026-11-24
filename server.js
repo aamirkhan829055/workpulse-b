@@ -14,20 +14,28 @@ dotenv.config();
 
 const app = express();
 
-// ALLOWED ORIGINS (Support localhost:3000, localhost:3001, etc.)
+// ALLOWED ORIGINS (Support localhost:3000, localhost:3001, live frontend, vercel domains)
 const allowedOrigins = [
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://workpulse-f.vercel.app",
     process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 // MIDDLEWARE
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+        if (!origin) return callback(null, true);
+
+        if (
+            allowedOrigins.includes(origin) ||
+            /^http:\/\/localhost:\d+$/.test(origin) ||
+            /\.vercel\.app$/.test(origin)
+        ) {
             return callback(null, true);
         }
-        return callback(new Error("Blocked by CORS"));
+
+        return callback(new Error("Blocked by CORS: " + origin));
     },
     credentials: true,
 }));
