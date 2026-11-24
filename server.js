@@ -1,0 +1,67 @@
+
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+
+import connectDB from "./config/db.js";
+import userRoutes from "./routes/userRoutes.js";
+import loginRoutes from "./routes/loginRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
+import deleteEmployeeRoutes from "./routes/deleteEmployeeRoutes.js";
+import editEmployeeRoutes from "./routes/editEmployeeRoutes.js";
+import logoutRoutes from "./routes/logoutRoutes.js";
+dotenv.config();
+
+const app = express();
+
+// ALLOWED ORIGINS (Support localhost:3000, localhost:3001, etc.)
+const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    process.env.FRONTEND_URL,
+].filter(Boolean);
+
+// MIDDLEWARE
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error("Blocked by CORS"));
+    },
+    credentials: true,
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+// HOME ROUTE
+app.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "Backend server is running!",
+    });
+});
+
+// USER ROUTES
+app.use("/api/users", userRoutes);
+app.use("/api/users", loginRoutes);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/employees/delete", deleteEmployeeRoutes);
+app.use("/api/employees/edit", editEmployeeRoutes);
+app.use("/api/users", logoutRoutes);
+// SERVER START
+const PORT = process.env.PORT || 5000;
+
+// FIRST START EXPRESS SERVER
+app.listen(PORT, async () => {
+    console.log(`Server running on port ${PORT}`);
+
+    // THEN CONNECT DATABASE
+    try {
+        await connectDB();
+    } catch (error) {
+        console.log("MongoDB Connection Error:", error.message);
+    }
+});

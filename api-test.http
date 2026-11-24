@@ -1,0 +1,87 @@
+### REGISTER USER API
+@base=http://localhost:5000
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZmMwZTI2OTI1OGY4YzA4OGQyNGIzMyIsImVtYWlsIjoiYXphbWlyODY1QGdtYWlsLmNvbSIsImlhdCI6MTc5NTQzODM0NCwiZXhwIjoxNzk2MDQzMTQ0fQ.lgJIiX9nd75Q8b0nzpTLPcimuLqQ8NC5BksmI2DGrxo
+
+### Register User
+POST {{base}}/api/users/register
+Content-Type: application/json
+
+{
+  "name": "Aamir Khan",
+  "email": "Azamir865@gmail.com",
+  "mobileNumber": "8290556412",
+  "password": "1234560",
+  "confirmPassword": "1234560"
+} 
+
+
+
+### LOGIN API
+# @name login
+POST {{base}}/api/users/login
+Content-Type: application/json  
+
+{
+  "email": "azamir865@gmail.com",
+  "password": "1234560"
+}
+
+### TOKEN VARIABLE (Auto-captured from Login above)
+@token = {{login.response.body.token}}
+
+
+
+### REGISTER EMPLOYEE API
+POST {{base}}/api/employees/register
+Content-Type: application/json
+
+{
+  "fullName": "Rahul Sharma",
+  "email": "rahul123@gmail.com",
+  "mobileNumber": "9876543210",
+  "employeeId": "EMP002",
+  "designation": "Software Engineer",
+  "joiningDate": "2026-11-17",
+  "password": "123456",
+  "confirmPassword": "123456"
+}
+
+#### all employees API get 
+GET {{base}}/api/employees/get-all
+Content-Type: application/json
+
+
+### DELETE EMPLOYEE BY MONGO ID OR EMPLOYEE ID
+DELETE {{base}}/api/employees/delete/6afd6b7da7d49af365c099d8
+Content-Type: application/json 
+
+
+### EDIT EMPLOYEE (By MongoDB _id)
+PUT {{base}}/api/employees/edit/6afd6b7da7d49af365c099d8
+Content-Type: application/json
+
+{
+    "fullName": "aby",
+    "email": "abUy@gmail.com",
+    "mobileNumber": "917568138275",
+    "employeeId": "8752",
+    "designation": "WEBDESIGNER hys",
+    "joiningDate": "2026-10-30T00:00:00.000+00:00"
+}
+
+
+### EDIT EMPLOYEE (By Custom employeeId e.g. 875 or 343)
+PUT {{base}}/api/employees/edit/343
+Content-Type: application/json
+
+{
+    "designation": "Lead Full Stack Developer"
+}
+
+###VIEW EMPLOYEE API
+GET {{base}}/api/employees/view/EMP002
+Content-Type: application/json 
+
+### LOGOUT USER API
+POST {{base}}/api/users/logout
+Authorization: Bearer {{token}}
