@@ -36,6 +36,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+// DATABASE CONNECTION MIDDLEWARE (Ensures DB is connected before any route runs - essential for Vercel/Serverless)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Database connection failed",
+            error: error.message,
+        });
+    }
+});
+
 // HOME ROUTE
 app.get("/", (req, res) => {
     res.json({
@@ -51,17 +65,14 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/employees/delete", deleteEmployeeRoutes);
 app.use("/api/employees/edit", editEmployeeRoutes);
 app.use("/api/users", logoutRoutes);
+
 // SERVER START
 const PORT = process.env.PORT || 5000;
 
-// FIRST START EXPRESS SERVER
-app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
-    // THEN CONNECT DATABASE
-    try {
-        await connectDB();
-    } catch (error) {
-        console.log("MongoDB Connection Error:", error.message);
-    }
-});
+export default app;

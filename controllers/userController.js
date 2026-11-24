@@ -12,7 +12,7 @@ export const registerUser = async (req, res) => {
             password,
             confirmPassword,
         } = req.body;
-
+        console.log(req.body)
 
         // CHECK REQUIRED FIELDS
         if (
